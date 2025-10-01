@@ -1,0 +1,1670 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Pet Elegance - Banho e Tosa Premium</title>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#4a90e2",
+              secondary: "#ff7e5f",
+              accent: "#6c5ce7",
+              success: "#2ecc71",
+              ink: "#0b1220",
+            },
+            fontFamily: {
+              poppins: ["Poppins", "sans-serif"],
+              montserrat: ["Montserrat", "sans-serif"],
+            },
+            boxShadow: {
+              soft: "0 10px 30px rgba(0,0,0,.08)",
+              float: "0 25px 60px rgba(0,0,0,.12)",
+            },
+            animation: {
+              "fade-in": "fadeIn .9s ease-out both",
+              "slide-up": "slideUp .8s ease-out both",
+              "bounce-in": "bounceIn .8s ease-out both",
+              float: "float 6s ease-in-out infinite",
+              blob: "blob 18s ease-in-out infinite",
+              "spin-slow": "spin 7s linear infinite",
+            },
+            keyframes: {
+              fadeIn: { "0%": { opacity: 0 }, "100%": { opacity: 1 } },
+              slideUp: {
+                "0%": { transform: "translateY(24px)", opacity: 0 },
+                "100%": { transform: "translateY(0)", opacity: 1 },
+              },
+              bounceIn: {
+                "0%": { transform: "scale(.88)", opacity: 0 },
+                "60%": { transform: "scale(1.04)", opacity: 0.9 },
+                "100%": { transform: "scale(1)", opacity: 1 },
+              },
+              float: {
+                "0%,100%": { transform: "translateY(0)" },
+                "50%": { transform: "translateY(-14px)" },
+              },
+              blob: {
+                "0%,100%": {
+                  borderRadius: "41% 59% 56% 44% / 43% 45% 55% 57%",
+                },
+                "33%": { borderRadius: "57% 43% 44% 56% / 52% 34% 66% 48%" },
+                "66%": { borderRadius: "44% 56% 49% 51% / 41% 64% 36% 59%" },
+              },
+            },
+          },
+        },
+      };
+    </script>
+
+    <style>
+      html {
+        scroll-behavior: smooth;
+      }
+      .gradient-bg {
+        background: radial-gradient(
+            1200px 600px at 10% 10%,
+            rgba(255, 255, 255, 0.08),
+            transparent 40%
+          ),
+          linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      }
+      .glass {
+        backdrop-filter: blur(10px);
+        background: rgba(255, 255, 255, 0.12);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+      }
+      .g-border {
+        position: relative;
+      }
+      .g-border:before {
+        content: "";
+        position: absolute;
+        inset: -1px;
+        border-radius: inherit;
+        background: linear-gradient(135deg, #ff7e5f, #6c5ce7, #4a90e2);
+        z-index: -1;
+        filter: blur(0.5px);
+      }
+      #scroll-progress {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 4px;
+        width: 0;
+        background: linear-gradient(90deg, #ff7e5f, #6c5ce7, #4a90e2);
+        z-index: 60;
+        box-shadow: 0 0 6px rgba(0, 0, 0, 0.15);
+      }
+
+      /* ---- Scroll Reveal defaults ---- */
+      [data-reveal] {
+        opacity: 0;
+        transform: translateY(24px);
+        will-change: transform, opacity;
+      }
+      [data-reveal].is-inview {
+        opacity: 1;
+        transform: none;
+        transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+          opacity 0.7s ease;
+      }
+      [data-reveal="fade"] {
+        transform: none;
+      }
+      [data-reveal="slide-up"] {
+        transform: translateY(28px);
+      }
+      [data-reveal="slide-left"] {
+        transform: translateX(28px);
+      }
+      [data-reveal="slide-right"] {
+        transform: translateX(-28px);
+      }
+      [data-reveal="scale"] {
+        transform: scale(0.96);
+        transform-origin: 50% 60%;
+      }
+
+      /* scrubbing elements start state (we anima via JS) */
+      [data-scrub] {
+        will-change: transform, opacity;
+      }
+
+      /* ripple (btn) */
+      .ripple-container {
+        position: relative;
+        overflow: hidden;
+      }
+      .ripple {
+        position: absolute;
+        border-radius: 9999px;
+        pointer-events: none;
+        background: rgba(255, 255, 255, 0.65);
+      }
+
+      /* gradient animation for service cards */
+      @keyframes gradientShift {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+      .hover\:before\:animate-gradientShift:hover::before {
+        animation: gradientShift 4s ease infinite;
+      }
+
+      /* --- Antes & Depois (compare slider) --- */
+      .compare {
+        position: relative;
+        --pos: 50%;
+      }
+      .compare [data-after] {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        width: var(--pos);
+      }
+      .compare [data-handle] {
+        position: absolute;
+        top: 0;
+        height: 100%;
+        left: var(--pos);
+        transform: translateX(-50%);
+        pointer-events: none;
+      }
+    </style>
+  </head>
+
+  <body class="font-poppins bg-gray-50 text-ink antialiased">
+    <div id="scroll-progress"></div>
+
+    <!-- decor blobs -->
+    <div
+      aria-hidden="true"
+      class="pointer-events-none fixed -z-10 inset-0 overflow-hidden"
+    >
+      <div
+        class="absolute -top-24 -left-24 w-[42rem] h-[42rem] bg-pink-400/20 blur-3xl animate-blob"
+      ></div>
+      <div
+        class="absolute top-1/4 -right-24 w-[36rem] h-[36rem] bg-indigo-400/20 blur-3xl animate-blob [animation-delay:6s]"
+      ></div>
+      <div
+        class="absolute bottom-0 left-1/3 w-[28rem] h-[28rem] bg-blue-400/20 blur-3xl animate-blob [animation-delay:12s]"
+      ></div>
+    </div>
+
+    <!-- Header -->
+    <header
+      id="navbar"
+      class="fixed w-full z-50 transition-all duration-300 bg-white/70 backdrop-blur-md border-b border-white/30"
+    >
+      <div class="container mx-auto px-4">
+        <nav class="flex justify-between items-center py-4">
+          <a href="#home" class="flex items-center gap-2 group">
+            <div
+              class="w-11 h-11 rounded-2xl bg-primary grid place-items-center shadow-soft group-hover:rotate-6 transition"
+            >
+              <i class="fas fa-paw text-white text-lg"></i>
+            </div>
+            <span
+              class="text-xl font-bold text-gray-900 font-montserrat tracking-tight"
+              >Pet Elegance</span
+            >
+          </a>
+
+          <div class="hidden md:flex items-center gap-1">
+            <a
+              data-nav
+              href="#home"
+              class="px-3 py-2 rounded-lg text-gray-700 hover:text-primary transition"
+              >Início</a
+            >
+            <a
+              data-nav
+              href="#services"
+              class="px-3 py-2 rounded-lg text-gray-700 hover:text-primary transition"
+              >Serviços</a
+            >
+            <a
+              data-nav
+              href="#about"
+              class="px-3 py-2 rounded-lg text-gray-700 hover:text-primary transition"
+              >Sobre</a
+            >
+            <a
+              data-nav
+              href="#testimonials"
+              class="px-3 py-2 rounded-lg text-gray-700 hover:text-primary transition"
+              >Depoimentos</a
+            >
+            <a
+              data-nav
+              href="#contact"
+              class="px-3 py-2 rounded-lg text-gray-700 hover:text-primary transition"
+              >Contato</a
+            >
+          </div>
+
+          <div class="flex items-center gap-3">
+            <a
+              href="https://wa.me/5511999999999?text=Olá! Gostaria de agendar um horário"
+              target="_blank"
+              class="ripple-container relative g-border rounded-full px-5 py-2 font-medium text-white"
+              style="
+                background: linear-gradient(135deg, #4a90e2 0%, #6c5ce7 100%);
+              "
+            >
+              <span class="inline-flex items-center gap-2">
+                <i class="fa-brands fa-whatsapp text-white"></i> Agendar
+              </span>
+            </a>
+            <button
+              id="mobile-menu-button"
+              class="md:hidden w-10 h-10 rounded-xl bg-white/70 hover:bg-white text-gray-700 shadow-soft"
+            >
+              <i class="fas fa-bars text-xl"></i>
+            </button>
+          </div>
+        </nav>
+      </div>
+
+      <div
+        id="mobile-menu"
+        class="md:hidden max-h-0 overflow-hidden transition-[max-height] duration-300 bg-white/90 backdrop-blur"
+      >
+        <div class="container mx-auto px-4 py-3 flex flex-col">
+          <a data-nav href="#home" class="py-3 border-t border-gray-100"
+            >Início</a
+          >
+          <a data-nav href="#services" class="py-3 border-t border-gray-100"
+            >Serviços</a
+          >
+          <a data-nav href="#about" class="py-3 border-t border-gray-100"
+            >Sobre</a
+          >
+          <a data-nav href="#testimonials" class="py-3 border-t border-gray-100"
+            >Depoimentos</a
+          >
+          <a data-nav href="#contact" class="py-3 border-y border-gray-100"
+            >Contato</a
+          >
+        </div>
+      </div>
+    </header>
+
+    <!-- Hero -->
+    <section
+      id="home"
+      class="pt-28 md:pt-36 pb-16 md:pb-24 gradient-bg text-white relative overflow-hidden"
+    >
+      <div class="container mx-auto px-4">
+        <div class="flex flex-col md:flex-row items-center gap-12">
+          <div class="md:w-1/2">
+            <span
+              class="inline-flex items-center gap-2 bg-white/10 rounded-full px-3 py-1 text-sm border border-white/20 mb-4"
+              data-reveal="fade"
+            >
+              <i class="fa-solid fa-shield-dog"></i> Cuidado Premium
+            </span>
+
+            <h1
+              class="text-4xl md:text-5xl lg:text-6xl font-bold font-montserrat mb-6 leading-tight"
+              data-reveal="slide-up"
+              data-stagger="80"
+            >
+              Cuidamos do seu <span class="text-secondary">pet</span> com amor e
+              profissionalismo
+            </h1>
+
+            <p
+              class="text-lg md:text-xl mb-8 opacity-90"
+              data-reveal="slide-up"
+              data-delay="120"
+            >
+              No Pet Elegance, seu animal de estimação recebe o tratamento que
+              merece. Banho, tosa, hidratação e muito mais em um ambiente seguro
+              e acolhedor.
+            </p>
+
+            <div class="flex flex-col sm:flex-row gap-4">
+              <a
+                href="#services"
+                class="ripple-container inline-flex items-center justify-center g-border rounded-full px-6 py-3 font-medium text-white shadow-float"
+                style="background: linear-gradient(135deg, #ff7e5f, #ff9966)"
+                data-reveal="slide-right"
+              >
+                Nossos Serviços
+              </a>
+              <a
+                href="https://wa.me/5511999999999?text=Olá! Gostaria de agendar um horário"
+                target="_blank"
+                class="ripple-container inline-flex items-center justify-center rounded-full px-6 py-3 font-medium bg-white text-primary hover:shadow-float transition"
+                data-reveal="slide-left"
+                data-delay="120"
+              >
+                Agendar Agora
+              </a>
+            </div>
+
+            <!-- counters com scrub de opacidade/translate -->
+            <div
+              class="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-4"
+              data-scrub='{"from":{"y":16},"to":{"y":0}}'
+            >
+              <div class="glass rounded-2xl p-4 text-center">
+                <p class="text-2xl font-bold" data-counter="500">0</p>
+                <p class="text-sm opacity-90">Pets Felizes</p>
+              </div>
+              <div class="glass rounded-2xl p-4 text-center">
+                <p class="text-2xl font-bold" data-counter="10">0</p>
+                <p class="text-sm opacity-90">Anos+</p>
+              </div>
+              <div class="glass rounded-2xl p-4 text-center">
+                <p class="text-2xl font-bold" data-counter="4.9">0</p>
+                <p class="text-sm opacity-90">Nota Média</p>
+              </div>
+              <div class="glass rounded-2xl p-4 text-center">
+                <p class="text-2xl font-bold" data-counter="1000">0</p>
+                <p class="text-sm opacity-90">Atendimentos/ano</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="md:w-1/2 flex justify-center">
+            <div class="relative" data-parallax='{"axis":"y","speed":0.15}'>
+              <div
+                class="w-80 h-80 md:w-[28rem] md:h-[28rem] rounded-[2.5rem] glass g-border grid place-items-center shadow-float"
+              >
+                <img
+                  src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=1074&q=80"
+                  alt="Cachorro feliz"
+                  class="w-64 h-64 md:w-80 md:h-80 rounded-3xl object-cover"
+                />
+              </div>
+              <span
+                class="absolute -z-10 -left-6 -top-6 w-28 h-28 rounded-3xl bg-secondary/25 blur-xl"
+                data-parallax='{"axis":"y","speed":0.3}'
+              ></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CTA flutuante mobile -->
+      <a
+        href="https://wa.me/5511999999999?text=Olá! Gostaria de agendar um horário"
+        target="_blank"
+        class="md:hidden fixed bottom-5 right-4 z-50 rounded-full px-5 py-3 text-white shadow-float ripple-container"
+        style="background: linear-gradient(135deg, #4a90e2, #6c5ce7)"
+      >
+        <i class="fa-brands fa-whatsapp mr-2"></i> Agendar
+      </a>
+    </section>
+
+    <!-- Services -->
+    <section id="services" class="py-20 bg-white relative">
+      <div class="container mx-auto px-4">
+        <div class="text-center mb-16" data-reveal="fade">
+          <h2
+            class="text-3xl md:text-4xl font-bold font-montserrat text-gray-800 mb-4"
+          >
+            Nossos Serviços
+          </h2>
+          <p class="text-gray-600 max-w-2xl mx-auto text-lg">
+            Variedade completa para manter seu pet bonito, saudável e feliz.
+          </p>
+        </div>
+
+        <div
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          data-reveal="slide-up"
+          data-stagger="120"
+        >
+          <!-- 1 -->
+          <article
+            class="relative group bg-white rounded-2xl overflow-hidden shadow-soft transition-all duration-500 hover:shadow-float hover:-translate-y-2 hover:border-transparent before:absolute before:inset-0 before:bg-[linear-gradient(135deg,#ff7e5f,#6c5ce7,#4a90e2)] before:bg-[length:200%_200%] before:opacity-0 before:transition-all before:duration-700 before:-z-10 hover:before:opacity-100 hover:before:animate-gradientShift"
+            data-tilt
+          >
+            <!-- imagem -->
+            <div
+              class="h-48 bg-cover bg-center"
+              style="
+                background-image: url('https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?auto=format&fit=crop&w=1171&q=80');
+                background-position: 70% 20%;
+              "
+            ></div>
+
+            <!-- conteúdo -->
+            <div class="p-6 relative z-10">
+              <h3
+                class="text-xl font-bold font-montserrat text-gray-800 mb-2 group-hover:text-white transition"
+              >
+                Banho Completo
+              </h3>
+              <p
+                class="text-gray-600 mb-5 group-hover:text-gray-100 transition"
+              >
+                Produtos premium específicos para a pelagem, higienização e
+                secagem adequada.
+              </p>
+              <div class="flex items-center justify-between">
+                <span
+                  class="text-2xl font-bold text-primary group-hover:text-white transition"
+                  >R$ 45</span
+                >
+                <a
+                  href="https://wa.me/5511999999999?text=Olá! Gostaria de agendar um Banho Completo"
+                  target="_blank"
+                  class="ripple-container bg-primary hover:bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-medium transition"
+                >
+                  Agendar
+                </a>
+              </div>
+            </div>
+          </article>
+
+          <!-- 2 -->
+          <article
+            class="relative group bg-white rounded-2xl overflow-hidden shadow-soft transition-all duration-500 hover:shadow-float hover:-translate-y-2 hover:border-transparent before:absolute before:inset-0 before:bg-[linear-gradient(135deg,#ff7e5f,#6c5ce7,#4a90e2)] before:bg-[length:200%_200%] before:opacity-0 before:transition-all before:duration-700 before:-z-10 hover:before:opacity-100 hover:before:animate-gradientShift"
+            data-tilt
+          >
+            <!-- imagem -->
+            <div
+              class="h-48 bg-cover bg-center"
+              style="
+                background-image: url('src/images/tosa-higienica.jpg');
+                background-size: cover;
+                background-position: 70% 20%;
+              "
+            ></div>
+
+            <!-- conteúdo -->
+            <div class="p-6 relative z-10">
+              <h3
+                class="text-xl font-bold font-montserrat text-gray-800 mb-2 group-hover:text-white transition"
+              >
+                Tosa Higiênica
+              </h3>
+              <p
+                class="text-gray-600 mb-5 group-hover:text-gray-100 transition"
+              >
+                Áreas íntimas, patas e rosto com técnica e conforto para o seu
+                pet.
+              </p>
+              <div class="flex items-center justify-between">
+                <span
+                  class="text-2xl font-bold text-primary group-hover:text-white transition"
+                  >R$ 35</span
+                >
+                <a
+                  href="https://wa.me/5511999999999?text=Olá! Gostaria de agendar uma Tosa Higiênica"
+                  target="_blank"
+                  class="ripple-container bg-primary hover:bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-medium transition"
+                >
+                  Agendar
+                </a>
+              </div>
+            </div>
+          </article>
+
+          <!-- 3 -->
+          <article
+            class="relative group bg-white rounded-2xl overflow-hidden shadow-soft transition-all duration-500 hover:shadow-float hover:-translate-y-2 hover:border-transparent before:absolute before:inset-0 before:bg-[linear-gradient(135deg,#ff7e5f,#6c5ce7,#4a90e2)] before:bg-[length:200%_200%] before:opacity-0 before:transition-all before:duration-700 before:-z-10 hover:before:opacity-100 hover:before:animate-gradientShift"
+            data-tilt
+          >
+            <!-- imagem -->
+            <div
+              class="h-48 bg-cover bg-center"
+              style="
+                background-image: url('src/images/tosa-tesoura.jpg');
+                background-size: cover;
+                background-position: 70% 20%;
+              "
+            ></div>
+
+            <!-- conteúdo -->
+            <div class="p-6 relative z-10">
+              <h3
+                class="text-xl font-bold font-montserrat text-gray-800 mb-2 group-hover:text-white transition"
+              >
+                Tosa na Tesoura
+              </h3>
+              <p
+                class="text-gray-600 mb-5 group-hover:text-gray-100 transition"
+              >
+                Corte artesanal por profissionais especializados — ideal para
+                pelagem longa.
+              </p>
+              <div class="flex items-center justify-between">
+                <span
+                  class="text-2xl font-bold text-primary group-hover:text-white transition"
+                  >R$ 60</span
+                >
+                <a
+                  href="https://wa.me/5511999999999?text=Olá! Gostaria de agendar uma Tosa na Tesoura"
+                  target="_blank"
+                  class="ripple-container bg-primary hover:bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-medium transition"
+                >
+                  Agendar
+                </a>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <div class="text-center mt-12" data-reveal="fade" data-delay="120">
+          <a
+            href="#contact"
+            class="inline-flex items-center gap-2 g-border rounded-full px-8 py-3 font-medium text-white shadow-float hover:translate-y-[-1px] transition"
+            style="background: linear-gradient(135deg, #ff7e5f, #ff9966)"
+          >
+            Ver Todos os Serviços <i class="fa-solid fa-arrow-right-long"></i>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- About -->
+    <section id="about" class="py-20 bg-gray-50 relative overflow-hidden">
+      <div class="container mx-auto px-4">
+        <div class="flex flex-col lg:flex-row items-center gap-12">
+          <div class="lg:w-1/2">
+            <div class="relative" data-parallax='{"axis":"y","speed":0.2}'>
+              <img
+                src="https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=962&q=80"
+                alt="Nossa equipe"
+                class="rounded-2xl shadow-float"
+                data-reveal="scale"
+              />
+              <span
+                class="absolute -z-10 -left-6 -top-6 w-28 h-28 rounded-3xl bg-secondary/25 blur-xl"
+              ></span>
+            </div>
+          </div>
+
+          <div class="lg:w-1/2 lg:pl-6 relative">
+            <h2
+              class="text-3xl md:text-4xl font-bold font-montserrat text-gray-800 mb-6"
+              data-reveal="slide-up"
+            >
+              Sobre o Pet Elegance
+            </h2>
+
+            <!-- Badge "10+ Anos" – mobile: inline; desktop: flutuando no topo direito -->
+            <div
+              class="mb-6 lg:-mt-20 inline-flex items-center gap-3 bg-white rounded-2xl p-4 shadow-float lg:absolute lg:top-0 lg:right-0 lg:-translate-y-4 lg:translate-x-4"
+            >
+              <div
+                class="w-12 h-12 rounded-full bg-primary grid place-items-center flex-shrink-0"
+              >
+                <i class="fas fa-award text-white text-xl"></i>
+              </div>
+              <div>
+                <p class="text-gray-800 font-bold leading-tight">10+</p>
+                <p class="text-gray-600 text-sm -mt-0.5">Anos de Experiência</p>
+              </div>
+            </div>
+            <p
+              class="text-gray-600 mb-6 text-lg"
+              data-reveal="fade"
+              data-delay="80"
+            >
+              Há mais de 10 anos no mercado, oferecemos serviços de banho e tosa
+              para cães e gatos com foco em bem-estar, carinho e atenção a cada
+              detalhe.
+            </p>
+            <p
+              class="text-gray-600 mb-8 text-lg"
+              data-reveal="fade"
+              data-delay="160"
+            >
+              Nossa equipe é apaixonada por animais e atualizada com as melhores
+              técnicas e produtos do mercado pet.
+            </p>
+
+            <div
+              class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8"
+              data-reveal="slide-up"
+              data-stagger="100"
+            >
+              <div class="flex items-start gap-4">
+                <div
+                  class="w-12 h-12 rounded-2xl bg-primary/10 grid place-items-center flex-shrink-0"
+                >
+                  <i class="fas fa-shield-alt text-primary text-xl"></i>
+                </div>
+                <div>
+                  <h3 class="font-bold text-gray-800 mb-1">Ambiente Seguro</h3>
+                  <p class="text-gray-600">
+                    Instalações projetadas para conforto e segurança.
+                  </p>
+                </div>
+              </div>
+              <div class="flex items-start gap-4">
+                <div
+                  class="w-12 h-12 rounded-2xl bg-primary/10 grid place-items-center flex-shrink-0"
+                >
+                  <i class="fas fa-award text-primary text-xl"></i>
+                </div>
+                <div>
+                  <h3 class="font-bold text-gray-800 mb-1">Produtos Premium</h3>
+                  <p class="text-gray-600">
+                    Linha hipoalergênica e de alto desempenho.
+                  </p>
+                </div>
+              </div>
+              <div class="flex items-start gap-4">
+                <div
+                  class="w-12 h-12 rounded-2xl bg-primary/10 grid place-items-center flex-shrink-0"
+                >
+                  <i class="fas fa-user-md text-primary text-xl"></i>
+                </div>
+                <div>
+                  <h3 class="font-bold text-gray-800 mb-1">
+                    Profissionais Qualificados
+                  </h3>
+                  <p class="text-gray-600">
+                    Equipe especializada e treinada continuamente.
+                  </p>
+                </div>
+              </div>
+              <div class="flex items-start gap-4">
+                <div
+                  class="w-12 h-12 rounded-2xl bg-primary/10 grid place-items-center flex-shrink-0"
+                >
+                  <i class="fas fa-heart text-primary text-xl"></i>
+                </div>
+                <div>
+                  <h3 class="font-bold text-gray-800 mb-1">
+                    Atendimento Personalizado
+                  </h3>
+                  <p class="text-gray-600">
+                    Cuidados específicos para cada necessidade.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <a
+              href="#contact"
+              class="inline-flex items-center gap-2 rounded-full px-6 py-3 font-medium bg-primary text-white hover:bg-blue-600 shadow-soft hover:shadow-float transition ripple-container"
+              data-reveal="slide-right"
+            >
+              Entre em Contato <i class="fa-regular fa-envelope"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="gallery" class="py-20 bg-gray-50 relative overflow-hidden">
+      <div class="container mx-auto px-4">
+        <div class="text-center mb-16" data-reveal="fade">
+          <h2
+            class="text-3xl md:text-4xl font-bold font-montserrat text-gray-800 mb-4"
+          >
+            Galeria – Antes & Depois
+          </h2>
+          <p class="text-gray-600 max-w-2xl mx-auto text-lg">
+            Um pouco do nosso trabalho: deslize a alça para comparar o
+            resultado.
+          </p>
+        </div>
+
+        <div
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          data-reveal="slide-up"
+          data-stagger="120"
+        >
+          <!-- CARD 1 -->
+          <article
+            class="relative group rounded-2xl overflow-hidden shadow-soft hover:shadow-float transition before:absolute before:inset-0 before:bg-[linear-gradient(135deg,#ff7e5f,#6c5ce7,#4a90e2)] before:bg-[length:200%_200%] before:opacity-0 hover:before:opacity-100 before:transition-all before:duration-700 before:-z-10 hover:before:animate-gradientShift"
+            data-tilt
+          >
+            <div class="aspect-[16/10] compare cursor-ew-resize" data-compare>
+              <!-- Antes -->
+              <img
+                src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=1200&q=80"
+                alt="Antes - Cão antes do banho"
+                class="absolute inset-0 w-full h-full object-cover"
+                draggable="false"
+              />
+              <!-- Depois (largura controlada por --pos) -->
+              <div data-after>
+                <img
+                  src="https://images.unsplash.com/photo-1548191265-cc70d3d45ba1?auto=format&fit=crop&w=1200&q=80"
+                  alt="Depois - Cão após a tosa"
+                  class="absolute inset-0 w-full h-full object-cover"
+                  draggable="false"
+                />
+              </div>
+
+              <!-- Labels -->
+              <span
+                class="absolute top-3 left-3 z-10 rounded-full px-3 py-1 text-xs font-medium bg-white/85 text-gray-800"
+                >Antes</span
+              >
+              <span
+                class="absolute top-3 right-3 z-10 rounded-full px-3 py-1 text-xs font-medium bg-white/85 text-gray-800"
+                >Depois</span
+              >
+
+              <!-- Handle -->
+              <div data-handle class="pointer-events-none">
+                <div
+                  class="absolute inset-y-0 left-1/2 -translate-x-1/2 w-[2px] bg-white/90"
+                ></div>
+                <div
+                  class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white grid place-items-center shadow-soft"
+                >
+                  <i class="fa-solid fa-arrows-left-right text-gray-700"></i>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- CARD 2 -->
+          <article
+            class="relative group rounded-2xl overflow-hidden shadow-soft hover:shadow-float transition before:absolute before:inset-0 before:bg-[linear-gradient(135deg,#ff7e5f,#6c5ce7,#4a90e2)] before:bg-[length:200%_200%] before:opacity-0 hover:before:opacity-100 before:transition-all before:duration-700 before:-z-10 hover:before:animate-gradientShift"
+            data-tilt
+          >
+            <div class="aspect-[16/10] compare cursor-ew-resize" data-compare>
+              <img
+                src="https://images.unsplash.com/photo-1450778869180-41d0601e046e?auto=format&fit=crop&w=1200&q=80"
+                alt="Antes - Gato antes da higiene"
+                class="absolute inset-0 w-full h-full object-cover"
+                draggable="false"
+              />
+              <div data-after>
+                <img
+                  src="https://images.unsplash.com/photo-1508672019048-805c876b67e2?auto=format&fit=crop&w=1200&q=80"
+                  alt="Depois - Gato após cuidados"
+                  class="absolute inset-0 w-full h-full object-cover"
+                  draggable="false"
+                />
+              </div>
+              <span
+                class="absolute top-3 left-3 z-10 rounded-full px-3 py-1 text-xs font-medium bg-white/85 text-gray-800"
+                >Antes</span
+              >
+              <span
+                class="absolute top-3 right-3 z-10 rounded-full px-3 py-1 text-xs font-medium bg-white/85 text-gray-800"
+                >Depois</span
+              >
+              <div data-handle class="pointer-events-none">
+                <div
+                  class="absolute inset-y-0 left-1/2 -translate-x-1/2 w-[2px] bg-white/90"
+                ></div>
+                <div
+                  class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white grid place-items-center shadow-soft"
+                >
+                  <i class="fa-solid fa-arrows-left-right text-gray-700"></i>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- CARD 3 -->
+          <article
+            class="relative group rounded-2xl overflow-hidden shadow-soft hover:shadow-float transition before:absolute before:inset-0 before:bg-[linear-gradient(135deg,#ff7e5f,#6c5ce7,#4a90e2)] before:bg-[length:200%_200%] before:opacity-0 hover:before:opacity-100 before:transition-all before:duration-700 before:-z-10 hover:before:animate-gradientShift"
+            data-tilt
+          >
+            <div class="aspect-[16/10] compare cursor-ew-resize" data-compare>
+              <img
+                src="src/images/dogs-after.jpg"
+                alt="Antes - Pelagem longa"
+                class="absolute inset-0 w-full h-full object-cover"
+                draggable="false"
+              />
+              <div data-after>
+                <img
+                  src="https://images.unsplash.com/photo-1579033461380-adb47c3eb938?auto=format&fit=crop&w=1200&q=80"
+                  alt="Depois - Pelagem aparada"
+                  class="absolute inset-0 w-full h-full object-cover"
+                  draggable="false"
+                />
+              </div>
+              <span
+                class="absolute top-3 left-3 z-10 rounded-full px-3 py-1 text-xs font-medium bg-white/85 text-gray-800"
+                >Antes</span
+              >
+              <span
+                class="absolute top-3 right-3 z-10 rounded-full px-3 py-1 text-xs font-medium bg-white/85 text-gray-800"
+                >Depois</span
+              >
+              <div data-handle class="pointer-events-none">
+                <div
+                  class="absolute inset-y-0 left-1/2 -translate-x-1/2 w-[2px] bg-white/90"
+                ></div>
+                <div
+                  class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white grid place-items-center shadow-soft"
+                >
+                  <i class="fa-solid fa-arrows-left-right text-gray-700"></i>
+                </div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section id="testimonials" class="py-20 bg-white relative">
+      <div class="container mx-auto px-4">
+        <div class="text-center mb-16" data-reveal="fade">
+          <h2
+            class="text-3xl md:text-4xl font-bold font-montserrat text-gray-800 mb-4"
+          >
+            O que dizem nossos clientes
+          </h2>
+          <p class="text-gray-600 max-w-2xl mx-auto text-lg">
+            Depoimentos de quem confia no nosso trabalho.
+          </p>
+        </div>
+
+        <div
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          data-reveal="slide-up"
+          data-stagger="100"
+        >
+          <div
+            class="bg-gray-50 rounded-2xl p-6 shadow-soft hover:shadow-float transition"
+            data-tilt
+          >
+            <div class="flex items-center mb-4">
+              <div class="w-12 h-12 rounded-full overflow-hidden mr-4">
+                <img
+                  src="https://randomuser.me/api/portraits/women/32.jpg"
+                  alt="Maria Silva"
+                  class="w-full h-full object-cover"
+                />
+              </div>
+              <div>
+                <h4 class="font-bold text-gray-800">Maria Silva</h4>
+                <p class="text-gray-600 text-sm">Tutora do Thor</p>
+              </div>
+            </div>
+            <p class="text-gray-600 italic">
+              "Levo meu labrador há mais de 2 anos e a qualidade é impecável. O
+              Thor sempre volta feliz e cheiroso!"
+            </p>
+            <div class="flex mt-4 text-yellow-400">
+              <i class="fas fa-star"></i><i class="fas fa-star ml-1"></i
+              ><i class="fas fa-star ml-1"></i><i class="fas fa-star ml-1"></i
+              ><i class="fas fa-star ml-1"></i>
+            </div>
+          </div>
+
+          <div
+            class="bg-gray-50 rounded-2xl p-6 shadow-soft hover:shadow-float transition"
+            data-tilt
+          >
+            <div class="flex items-center mb-4">
+              <div class="w-12 h-12 rounded-full overflow-hidden mr-4">
+                <img
+                  src="https://randomuser.me/api/portraits/women/44.jpg"
+                  alt="Ana Costa"
+                  class="w-full h-full object-cover"
+                />
+              </div>
+              <div>
+                <h4 class="font-bold text-gray-800">Ana Costa</h4>
+                <p class="text-gray-600 text-sm">Tutora da Luna</p>
+              </div>
+            </div>
+            <p class="text-gray-600 italic">
+              "Minha gata é arisca, mas aqui ela fica tranquila. Atendimento com
+              muita paciência e carinho!"
+            </p>
+            <div class="flex mt-4 text-yellow-400">
+              <i class="fas fa-star"></i><i class="fas fa-star ml-1"></i
+              ><i class="fas fa-star ml-1"></i><i class="fas fa-star ml-1"></i
+              ><i class="fas fa-star ml-1"></i>
+            </div>
+          </div>
+
+          <div
+            class="bg-gray-50 rounded-2xl p-6 shadow-soft hover:shadow-float transition"
+            data-tilt
+          >
+            <div class="flex items-center mb-4">
+              <div class="w-12 h-12 rounded-full overflow-hidden mr-4">
+                <img
+                  src="https://randomuser.me/api/portraits/men/22.jpg"
+                  alt="Carlos Mendes"
+                  class="w-full h-full object-cover"
+                />
+              </div>
+              <div>
+                <h4 class="font-bold text-gray-800">Carlos Mendes</h4>
+                <p class="text-gray-600 text-sm">Tutor do Bob</p>
+              </div>
+            </div>
+            <p class="text-gray-600 italic">
+              "A tosa do meu poodle sempre sai perfeita e com dicas para
+              manutenção em casa. Excelentes!"
+            </p>
+            <div class="flex mt-4 text-yellow-400">
+              <i class="fas fa-star"></i><i class="fas fa-star ml-1"></i
+              ><i class="fas fa-star ml-1"></i><i class="fas fa-star ml-1"></i
+              ><i class="fas fa-star ml-1"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section
+      class="py-20 gradient-bg text-white relative overflow-hidden"
+      data-scrub='{"from":{"opacity":.6,"scale":.98},"to":{"opacity":1,"scale":1}}'
+    >
+      <div
+        class="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_30%_20%,white,transparent_35%)]"
+      ></div>
+      <div class="container mx-auto px-4 text-center">
+        <h2
+          class="text-3xl md:text-4xl font-bold font-montserrat mb-6"
+          data-reveal="slide-up"
+        >
+          Pronto para mimar seu pet?
+        </h2>
+        <p
+          class="text-xl max-w-2xl mx-auto mb-8 opacity-90"
+          data-reveal="fade"
+          data-delay="100"
+        >
+          Agende agora mesmo um horário e proporcione ao seu animal de estimação
+          o cuidado que ele merece.
+        </p>
+        <a
+          href="https://wa.me/5511999999999?text=Olá! Gostaria de agendar um horário"
+          target="_blank"
+          class="inline-flex items-center gap-2 rounded-full px-8 py-3 font-medium bg-white text-primary hover:shadow-float transition ripple-container"
+          data-reveal="slide-right"
+        >
+          Agendar pelo WhatsApp <i class="fa-brands fa-whatsapp"></i>
+        </a>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="py-20 bg-gray-50 relative">
+      <div class="container mx-auto px-4">
+        <div class="text-center mb-16" data-reveal="fade">
+          <h2
+            class="text-3xl md:text-4xl font-bold font-montserrat text-gray-800 mb-4"
+          >
+            Entre em Contato
+          </h2>
+          <p class="text-gray-600 max-w-2xl mx-auto text-lg">
+            Dúvidas ou agendamentos? Fale com a gente!
+          </p>
+        </div>
+
+        <div class="flex flex-col lg:flex-row gap-10">
+          <div class="lg:w-1/2 lg:pr-4" data-reveal="slide-right">
+            <div class="bg-white rounded-2xl p-8 shadow-soft">
+              <div class="flex items-start mb-8">
+                <div
+                  class="w-12 h-12 rounded-xl bg-primary/10 grid place-items-center mr-4 flex-shrink-0"
+                >
+                  <i class="fas fa-map-marker-alt text-primary text-xl"></i>
+                </div>
+                <div>
+                  <h3 class="font-bold text-gray-800 text-lg mb-1">Endereço</h3>
+                  <p class="text-gray-600">
+                    Rua dos Animais, 123<br />Jardim Pet, São Paulo - SP<br />CEP:
+                    01234-567
+                  </p>
+                </div>
+              </div>
+              <div class="flex items-start mb-8">
+                <div
+                  class="w-12 h-12 rounded-xl bg-primary/10 grid place-items-center mr-4 flex-shrink-0"
+                >
+                  <i class="fas fa-phone-alt text-primary text-xl"></i>
+                </div>
+                <div>
+                  <h3 class="font-bold text-gray-800 text-lg mb-1">Telefone</h3>
+                  <p class="text-gray-600">
+                    (11) 3456-7890<br />(11) 98765-4321 (WhatsApp)
+                  </p>
+                </div>
+              </div>
+              <div class="flex items-start mb-8">
+                <div
+                  class="w-12 h-12 rounded-xl bg-primary/10 grid place-items-center mr-4 flex-shrink-0"
+                >
+                  <i class="fas fa-envelope text-primary text-xl"></i>
+                </div>
+                <div>
+                  <h3 class="font-bold text-gray-800 text-lg mb-1">E-mail</h3>
+                  <p class="text-gray-600">contato@petelagance.com.br</p>
+                </div>
+              </div>
+              <div class="flex items-start">
+                <div
+                  class="w-12 h-12 rounded-xl bg-primary/10 grid place-items-center mr-4 flex-shrink-0"
+                >
+                  <i class="fas fa-clock text-primary text-xl"></i>
+                </div>
+                <div>
+                  <h3 class="font-bold text-gray-800 text-lg mb-1">Horário</h3>
+                  <p class="text-gray-600">
+                    Seg–Sex: 8h–18h<br />Sáb: 8h–16h • Dom: Fechado
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="lg:w-1/2" data-reveal="slide-left" data-delay="80">
+            <div class="bg-white rounded-2xl p-8 shadow-soft">
+              <form id="contactForm" class="space-y-6">
+                <div>
+                  <label for="name" class="block text-gray-700 font-medium mb-2"
+                    >Seu nome</label
+                  ><input
+                    id="name"
+                    type="text"
+                    placeholder="Digite seu nome completo"
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
+                  />
+                </div>
+                <div>
+                  <label
+                    for="email"
+                    class="block text-gray-700 font-medium mb-2"
+                    >Seu e-mail</label
+                  ><input
+                    id="email"
+                    type="email"
+                    placeholder="exemplo@email.com"
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
+                  />
+                </div>
+                <div>
+                  <label
+                    for="phone"
+                    class="block text-gray-700 font-medium mb-2"
+                    >Seu telefone</label
+                  ><input
+                    id="phone"
+                    type="tel"
+                    placeholder="(11) 99999-9999"
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
+                  />
+                </div>
+                <div>
+                  <label
+                    for="service"
+                    class="block text-gray-700 font-medium mb-2"
+                    >Serviço de interesse</label
+                  >
+                  <select
+                    id="service"
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
+                  >
+                    <option value="" disabled selected>
+                      Selecione o serviço
+                    </option>
+                    <option value="banho">Banho Completo</option>
+                    <option value="tosa-higienica">Tosa Higiênica</option>
+                    <option value="tosa-tesoura">Tosa na Tesoura</option>
+                    <option value="outro">Outro</option>
+                  </select>
+                </div>
+                <div>
+                  <label
+                    for="message"
+                    class="block text-gray-700 font-medium mb-2"
+                    >Sua mensagem</label
+                  ><textarea
+                    id="message"
+                    rows="4"
+                    placeholder="Conte-nos sobre seu pet e que serviço você gostaria de agendar..."
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
+                  ></textarea>
+                </div>
+                <button
+                  type="submit"
+                  class="w-full g-border rounded-lg py-3 font-medium text-white shadow-soft hover:shadow-float transition ripple-container"
+                  style="background: linear-gradient(135deg, #4a90e2, #6c5ce7)"
+                >
+                  Enviar Mensagem
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Back to top -->
+      <button
+        id="toTop"
+        class="hidden fixed bottom-6 left-6 z-50 rounded-full w-11 h-11 bg-white text-primary shadow-float hover:scale-105 transition"
+      >
+        <i class="fa-solid fa-arrow-up"></i>
+      </button>
+    </section>
+
+    <footer class="bg-gray-900 text-white pt-14 pb-10 relative overflow-hidden">
+      <div class="container mx-auto px-4">
+        <div
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-10"
+          data-reveal="fade"
+          data-stagger="80"
+        >
+          <div>
+            <div class="flex items-center gap-2 mb-4">
+              <div
+                class="w-9 h-9 rounded-xl bg-primary grid place-items-center"
+              >
+                <i class="fas fa-paw text-white"></i>
+              </div>
+              <span class="text-xl font-bold font-montserrat"
+                >Pet Elegance</span
+              >
+            </div>
+            <p class="text-gray-300/80 mb-4">
+              Cuidamos do seu pet com amor e profissionalismo.
+            </p>
+            <div class="flex gap-3">
+              <a
+                href="#"
+                class="w-10 h-10 rounded-full bg-white/10 grid place-items-center hover:bg-primary transition"
+                ><i class="fab fa-facebook-f"></i
+              ></a>
+              <a
+                href="#"
+                class="w-10 h-10 rounded-full bg-white/10 grid place-items-center hover:bg-primary transition"
+                ><i class="fab fa-instagram"></i
+              ></a>
+              <a
+                href="#"
+                class="w-10 h-10 rounded-full bg-white/10 grid place-items-center hover:bg-primary transition"
+                ><i class="fab fa-whatsapp"></i
+              ></a>
+            </div>
+          </div>
+          <div>
+            <h3 class="font-bold text-lg mb-4 font-montserrat">Serviços</h3>
+            <ul class="space-y-2 text-gray-300/90">
+              <li>
+                <a href="#services" class="hover:text-white transition"
+                  >Banho Completo</a
+                >
+              </li>
+              <li>
+                <a href="#services" class="hover:text-white transition"
+                  >Tosa Higiênica</a
+                >
+              </li>
+              <li>
+                <a href="#services" class="hover:text-white transition"
+                  >Tosa na Tesoura</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="font-bold text-lg mb-4 font-montserrat">
+              Links Rápidos
+            </h3>
+            <ul class="space-y-2 text-gray-300/90">
+              <li>
+                <a data-nav href="#home" class="hover:text-white transition"
+                  >Início</a
+                >
+              </li>
+              <li>
+                <a data-nav href="#services" class="hover:text-white transition"
+                  >Serviços</a
+                >
+              </li>
+              <li>
+                <a data-nav href="#about" class="hover:text-white transition"
+                  >Sobre Nós</a
+                >
+              </li>
+              <li>
+                <a
+                  data-nav
+                  href="#testimonials"
+                  class="hover:text-white transition"
+                  >Depoimentos</a
+                >
+              </li>
+              <li>
+                <a data-nav href="#contact" class="hover:text-white transition"
+                  >Contato</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="font-bold text-lg mb-4 font-montserrat">Newsletter</h3>
+            <p class="text-gray-300/90 mb-4">Receba novidades e promoções.</p>
+            <form id="newsletterForm" class="flex">
+              <input
+                id="newsletterEmail"
+                type="email"
+                placeholder="Seu e-mail"
+                required
+                class="px-4 py-2 bg-white/10 text-white rounded-l-lg focus:outline-none focus:ring-2 focus:ring-primary w-full placeholder:text-white/60"
+              />
+              <button
+                type="submit"
+                class="bg-primary hover:bg-blue-600 px-4 py-2 rounded-r-lg transition"
+              >
+                <i class="fas fa-paper-plane"></i>
+              </button>
+            </form>
+          </div>
+        </div>
+        <div class="pt-6 border-t border-white/10 text-center text-gray-300/80">
+          <p>
+            &copy; 2025 Pet Elegance. Todos os direitos reservados por
+            <a
+              href="https://kawanwagnner.github.io/Portfolio/"
+              target="_blank"
+              class="text-primary hover:text-white transition no-underline"
+              >Kawan Wnn</a
+            >.
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      // Helpers
+      const qs = (s, p = document) => p.querySelector(s),
+        qsa = (s, p = document) => [...p.querySelectorAll(s)];
+
+      // Mobile menu
+      const mobileBtn = qs("#mobile-menu-button"),
+        mobileMenu = qs("#mobile-menu");
+
+      function toggleMobileMenu() {
+        const open =
+          mobileMenu.style.maxHeight && mobileMenu.style.maxHeight !== "0px";
+        mobileMenu.style.maxHeight = open
+          ? "0px"
+          : mobileMenu.scrollHeight + "px";
+      }
+
+      mobileBtn.addEventListener("click", toggleMobileMenu);
+
+      // Close mobile menu when clicking on nav items
+      qsa("#mobile-menu [data-nav]").forEach((link) => {
+        link.addEventListener("click", () => {
+          mobileMenu.style.maxHeight = "0px";
+        });
+      });
+
+      // Navbar + active links + progress bar
+      const navbar = qs("#navbar"),
+        navLinks = qsa("[data-nav]"),
+        progress = qs("#scroll-progress");
+      const sections = [
+        "home",
+        "services",
+        "about",
+        "testimonials",
+        "contact",
+      ].map((id) => qs("#" + id));
+      function setActiveLink() {
+        const scY = window.scrollY + 120;
+        let current = "home";
+        sections.forEach((sec) => {
+          if (sec && scY >= sec.offsetTop) current = sec.id;
+        });
+        navLinks.forEach((a) =>
+          a.classList.toggle(
+            "text-primary",
+            a.getAttribute("href") === "#" + current
+          )
+        );
+      }
+      window.addEventListener("scroll", () => {
+        navbar.classList.toggle("shadow-md", window.scrollY > 10);
+        setActiveLink();
+        const h = document.documentElement,
+          sc = h.scrollTop || document.body.scrollTop,
+          height = h.scrollHeight - h.clientHeight;
+        progress.style.width = (sc / height) * 100 + "%";
+      });
+      setActiveLink();
+
+      // Back to top
+      const toTop = document.getElementById("toTop");
+      if (toTop) {
+        window.addEventListener("scroll", () => {
+          toTop.classList.toggle("hidden", window.scrollY < 400);
+        });
+        toTop.addEventListener("click", () =>
+          window.scrollTo({ top: 0, behavior: "smooth" })
+        );
+      }
+
+      // Ripple
+      function attachRipple(el) {
+        el.addEventListener("click", (e) => {
+          const r = document.createElement("span");
+          const size = Math.max(el.clientWidth, el.clientHeight);
+          const rect = el.getBoundingClientRect();
+          r.className = "ripple";
+          r.style.width = r.style.height = size + "px";
+          r.style.left = e.clientX - rect.left - size / 2 + "px";
+          r.style.top = e.clientY - rect.top - size / 2 + "px";
+          el.appendChild(r);
+          r.animate(
+            [
+              { transform: "scale(1)", opacity: 0.5 },
+              { transform: "scale(2.3)", opacity: 0 },
+            ],
+            { duration: 600, easing: "ease-out" }
+          );
+          setTimeout(() => r.remove(), 620);
+        });
+      }
+      qsa(".ripple-container").forEach(attachRipple);
+
+      // Tilt (mouse parallax) em cards
+      qsa("[data-tilt]").forEach((card) => {
+        let rect;
+        function onMove(e) {
+          rect = rect || card.getBoundingClientRect();
+          const x = e.clientX - rect.left,
+            y = e.clientY - rect.top;
+          const rx = (y / rect.height - 0.5) * -8,
+            ry = (x / rect.width - 0.5) * 8;
+          card.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) translateZ(0)`;
+        }
+        function reset() {
+          card.style.transform =
+            "perspective(900px) rotateX(0) rotateY(0) translateZ(0)";
+          rect = null;
+        }
+        card.addEventListener("mousemove", onMove);
+        card.addEventListener("mouseleave", reset);
+        card.addEventListener(
+          "mouseenter",
+          () => (rect = card.getBoundingClientRect())
+        );
+      });
+
+      // Counters
+      function animateCounter(el) {
+        const target = parseFloat(el.dataset.counter || "0");
+        const isFloat = !Number.isInteger(target);
+        const dur = 1200,
+          start = performance.now();
+        function tick(now) {
+          const p = Math.min((now - start) / dur, 1);
+          const val = target * (0.2 + 0.8 * (p * p * (3 - 2 * p)));
+          el.textContent = isFloat
+            ? val.toFixed(1)
+            : Math.floor(val).toLocaleString("pt-BR");
+          if (p < 1) requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+      }
+      const counterIO = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((en) => {
+            if (en.isIntersecting) {
+              qsa("[data-counter]", en.target).forEach(animateCounter);
+              counterIO.unobserve(en.target);
+            }
+          });
+        },
+        { threshold: 0.35 }
+      );
+      qsa("#home, #services, #about, #testimonials, #contact").forEach((sec) =>
+        counterIO.observe(sec)
+      );
+
+      // --------- SCROLL REVEAL ----------
+      const revealEls = qsa("[data-reveal]");
+      const revealIO = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              const el = entry.target;
+              const delay = (parseInt(el.dataset.delay, 10) || 0) + "ms";
+              const stagger = parseInt(el.dataset.stagger || "0", 10);
+              // Stagger children if container
+              if (stagger && el.children.length) {
+                [...el.children].forEach((child, i) => {
+                  child.style.transitionDelay = `${i * stagger}ms`;
+                  child.classList.add("is-inview");
+                });
+                el.classList.add("is-inview");
+              } else {
+                el.style.transitionDelay = delay;
+                el.classList.add("is-inview");
+              }
+              revealIO.unobserve(el);
+            }
+          });
+        },
+        { threshold: 0.18, rootMargin: "0px 0px -60px 0px" }
+      );
+      revealEls.forEach((el) => revealIO.observe(el));
+
+      // --------- PARALLAX (scroll speed) ----------
+      const prxEls = qsa("[data-parallax]");
+      function parallaxTick() {
+        // desliga em telas pequenas
+        if (window.innerWidth < 768) {
+          prxEls.forEach((el) => {
+            el.style.transform = "none";
+          });
+          return; // não agenda novo frame
+        }
+        const vh = window.innerHeight;
+        prxEls.forEach((el) => {
+          const cfg = JSON.parse(el.getAttribute("data-parallax"));
+          const axis = cfg.axis || "y";
+          const speed = cfg.speed || 0.2;
+          const r = el.getBoundingClientRect();
+          const center = (r.top + r.bottom) / 2 - vh / 2;
+          const move = -center * speed;
+          const tx = axis === "x" ? move : 0;
+          const ty = axis === "y" ? move : 0;
+          el.style.transform = `translate3d(${tx}px,${ty}px,0)`;
+        });
+        requestAnimationFrame(parallaxTick);
+      }
+      // inicia parallax
+      requestAnimationFrame(parallaxTick);
+
+      // --------- SCRUB (progresso conforme rolagem) ----------
+      // Usa o quanto da seção está visível para interpolar propriedades (translate/scale/opacity)
+      const scrubEls = qsa("[data-scrub]");
+      function lerp(a, b, t) {
+        return a + (b - a) * t;
+      }
+      function clamp(n, min, max) {
+        return Math.max(min, Math.min(max, n));
+      }
+      function scrubTick() {
+        const vh = window.innerHeight;
+        scrubEls.forEach((el) => {
+          const cfg = JSON.parse(el.getAttribute("data-scrub")); // {from:{opacity,x,y,scale}, to:{...}}
+          const rect = el.getBoundingClientRect();
+          const visible = clamp(
+            (vh - Math.max(0, rect.top)) / (vh + rect.height),
+            0,
+            1
+          ); // 0..1
+          const f = cfg.from || {},
+            t = cfg.to || {};
+          const ox = lerp(f.x || 0, t.x || 0, visible);
+          const oy = lerp(f.y || 0, t.y || 0, visible);
+          const sc = lerp(f.scale || 1, t.scale || 1, visible);
+          const op = lerp(f.opacity ?? 1, t.opacity ?? 1, visible);
+          el.style.transform = `translate3d(${ox}px,${oy}px,0) scale(${sc})`;
+          el.style.opacity = op;
+        });
+        requestAnimationFrame(scrubTick);
+      }
+      requestAnimationFrame(scrubTick);
+
+      // Newsletter form - WhatsApp integration
+      qs("#newsletterForm")?.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        // Pega o e-mail do formulário de newsletter
+        const email = qs("#newsletterEmail").value.trim();
+
+        if (!email) {
+          alert("Por favor, digite seu e-mail!");
+          return;
+        }
+
+        // Constrói a mensagem personalizada para o WhatsApp
+        let whatsappMessage = `📧 *Pet Elegance - Inscrição Newsletter*\n\n`;
+        whatsappMessage += `Olá! Gostaria de me inscrever na newsletter do Pet Elegance.\n\n`;
+        whatsappMessage += `📧 *Meu e-mail:* ${email}\n\n`;
+        whatsappMessage += `Quero receber:\n`;
+        whatsappMessage += `• Novidades sobre serviços\n`;
+        whatsappMessage += `• Promoções exclusivas\n`;
+        whatsappMessage += `• Dicas de cuidados pet\n\n`;
+        whatsappMessage += `---\n_Inscrição via site Pet Elegance_`;
+
+        // Codifica a mensagem para URL
+        const encodedMessage = encodeURIComponent(whatsappMessage);
+
+        // Abre o WhatsApp com a mensagem personalizada
+        const whatsappUrl = `https://wa.me/5511939060203?text=${encodedMessage}`;
+        window.open(whatsappUrl, "_blank");
+
+        // Mostra confirmação e limpa o formulário
+        alert(
+          "Redirecionando para o WhatsApp para confirmar sua inscrição! 📧"
+        );
+        this.reset();
+      });
+
+      // Form submit - WhatsApp integration
+      qs("#contactForm")?.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        // Pega os valores do formulário
+        const name = qs("#name").value.trim();
+        const email = qs("#email").value.trim();
+        const phone = qs("#phone").value.trim();
+        const service = qs("#service").value;
+        const message = qs("#message").value.trim();
+
+        // Mapeia os valores dos serviços para nomes mais legíveis
+        const serviceNames = {
+          banho: "Banho Completo",
+          "tosa-higienica": "Tosa Higiênica",
+          "tosa-tesoura": "Tosa na Tesoura",
+          outro: "Outro serviço",
+        };
+
+        // Constrói a mensagem personalizada para o WhatsApp
+        let whatsappMessage = `🐾 *Pet Elegance - Novo Contato*\n\n`;
+        whatsappMessage += `👤 *Nome:* ${name}\n`;
+        whatsappMessage += `📧 *E-mail:* ${email}\n`;
+        whatsappMessage += `📱 *Telefone:* ${phone}\n`;
+        whatsappMessage += `🛁 *Serviço de interesse:* ${
+          serviceNames[service] || service
+        }\n\n`;
+        whatsappMessage += `💬 *Mensagem:*\n${message}\n\n`;
+        whatsappMessage += `---\n_Enviado pelo site Pet Elegance_`;
+
+        // Codifica a mensagem para URL
+        const encodedMessage = encodeURIComponent(whatsappMessage);
+
+        // Abre o WhatsApp com a mensagem personalizada
+        const whatsappUrl = `https://wa.me/5511939060203?text=${encodedMessage}`;
+        window.open(whatsappUrl, "_blank");
+
+        // Mostra confirmação e limpa o formulário
+        alert("Redirecionando para o WhatsApp com suas informações! 🚀");
+        this.reset();
+      });
+
+      // --------- COMPARE (Antes/Depois) ----------
+      function initCompare(el) {
+        let dragging = false;
+
+        function setFromClientX(clientX) {
+          const r = el.getBoundingClientRect();
+          let p = ((clientX - r.left) / r.width) * 100;
+          p = Math.max(0, Math.min(100, p));
+          el.style.setProperty("--pos", p + "%");
+        }
+
+        const start = (e) => {
+          dragging = true;
+          setFromClientX(e.touches ? e.touches[0].clientX : e.clientX);
+        };
+        const move = (e) => {
+          if (!dragging) return;
+          setFromClientX(e.touches ? e.touches[0].clientX : e.clientX);
+        };
+        const end = () => (dragging = false);
+
+        el.addEventListener("mousedown", start);
+        el.addEventListener("mousemove", move);
+        window.addEventListener("mouseup", end);
+        el.addEventListener("touchstart", start, { passive: true });
+        el.addEventListener("touchmove", move, { passive: true });
+        window.addEventListener("touchend", end);
+
+        // acessível pelo teclado
+        el.setAttribute("tabindex", "0");
+        el.addEventListener("keydown", (e) => {
+          if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
+            const current =
+              parseFloat(getComputedStyle(el).getPropertyValue("--pos")) || 50;
+            const next = Math.max(
+              0,
+              Math.min(100, current + (e.key === "ArrowLeft" ? -5 : 5))
+            );
+            el.style.setProperty("--pos", next + "%");
+            e.preventDefault();
+          }
+        });
+      }
+      qsa("[data-compare]").forEach(initCompare);
+    </script>
+  </body>
+</html>
